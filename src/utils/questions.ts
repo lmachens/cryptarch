@@ -1,5 +1,5 @@
 import inquirer from 'inquirer';
-import type { Credential } from '../types';
+import type { Command, Credential } from '../types';
 
 export const readMainPassword = (): Promise<string> => {
   return inquirer
@@ -10,9 +10,9 @@ export const readMainPassword = (): Promise<string> => {
     .then((answers) => answers.mainPassword);
 };
 
-export const chooseCommand = (): Promise<string> => {
+export const chooseCommand = (): Promise<Command> => {
   return inquirer
-    .prompt<{ command: string }>({
+    .prompt<{ command: Command }>({
       type: 'list',
       name: 'command',
       message: 'What do you want to do?',

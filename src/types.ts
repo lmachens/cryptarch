@@ -3,3 +3,5 @@ export type Credential = {
   username: string;
   password: string;
 };
+
+export type Command = 'list' | 'add';
