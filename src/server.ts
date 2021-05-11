@@ -1,13 +1,12 @@
 import {
   printInvalidMainPassword,
   printCorrectMainPassword,
-  printWelcomeMessage
+  printWelcomeMessage,
 } from './utils/messages';
 import {
   chooseCommand,
   readMainPassword,
-  chooseService
-
+  chooseService,
 } from './utils/questions';
 import { isMainPasswordValid } from './utils/validation';
 import { handleAdd } from './utils/commands';
@@ -33,9 +32,6 @@ const start = async (): Promise<void> => {
       await handleAdd();
       break;
     }
-
-
   }
-
 };
 start();

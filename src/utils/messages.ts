@@ -16,4 +16,4 @@ export const printServiceAlreadyExists = (): void => {
 
 export const printAddCredentialSuccess = (): void => {
   console.log('Service successfully added (❁´◡`❁)');
-}
+};
