@@ -7,5 +7,13 @@ export const printInvalidMainPassword = (): void => {
 };
 
 export const printCorrectMainPassword = (): void => {
-  console.error('The main password is correct (❁´◡`❁)');
+  console.log('The main password is correct (❁´◡`❁)');
 };
+
+export const printServiceAlreadyExists = (): void => {
+  console.error('Service already exists. Try again ￣へ￣');
+};
+
+export const printAddCredentialSuccess = (): void => {
+  console.log('Service successfully added (❁´◡`❁)');
+}

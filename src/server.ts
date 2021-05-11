@@ -1,15 +1,16 @@
 import {
   printInvalidMainPassword,
   printCorrectMainPassword,
-  printWelcomeMessage,
+  printWelcomeMessage
 } from './utils/messages';
 import {
   chooseCommand,
   readMainPassword,
-  chooseService,
-  readCredential,
+  chooseService
+
 } from './utils/questions';
 import { isMainPasswordValid } from './utils/validation';
+import { handleAdd } from './utils/commands';
 
 const start = async (): Promise<void> => {
   printWelcomeMessage();
@@ -23,17 +24,18 @@ const start = async (): Promise<void> => {
   printCorrectMainPassword();
 
   const command = await chooseCommand();
-
   switch (command) {
     case 'list': {
       await chooseService(['Leon', 'Christopher', 'Philipp']);
       break;
     }
     case 'add': {
-      await readCredential();
+      await handleAdd();
       break;
     }
-  }
-};
 
+
+  }
+
+};
 start();
