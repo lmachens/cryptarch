@@ -1,3 +1,21 @@
-import fs from 'fs';
+import {
+  printInvalidMainPassword,
+  printCorrectMainPassword,
+  printWelcomeMessage,
+} from './utils/messages';
+import { readMainPassword } from './utils/questions';
+import { isMainPasswordValid } from './utils/validation';
 
-console.log(fs.readFileSync('./README.md', 'utf-8'));
+const start = async (): Promise<void> => {
+  printWelcomeMessage();
+
+  let mainPassword = await readMainPassword();
+  while (!isMainPasswordValid(mainPassword)) {
+    printInvalidMainPassword();
+    mainPassword = await readMainPassword();
+  }
+
+  printCorrectMainPassword();
+};
+
+start();
