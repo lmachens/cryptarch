@@ -3,14 +3,17 @@ import {
   askForCredential,
   askForMainPassword,
   chooseCommand,
-  chooseService,
 } from './utils/questions';
 import { isMainPasswordValid } from './utils/validation';
 import { printPassword } from './utils/messages';
 import { connectDatabase, disconnectDatabase } from './utils/database';
 
 dotenv.config();
-import { readCredentials, saveCredential } from './utils/credentials';
+import {
+  deleteCredential,
+  saveCredential,
+  selectCredential,
+} from './utils/credentials';
 
 // function start() {
 const start = async () => {
@@ -32,20 +35,22 @@ const start = async () => {
 
   switch (command) {
     case 'list':
+    case 'delete':
       {
-        const credentials = await readCredentials();
-        const credentialServices = credentials.map(
-          (credential) => credential.service
-        );
-        const service = await chooseService(credentialServices);
-        const selectedService = credentials.find(
-          (credential) => credential.service === service
-        );
-        console.log(selectedService);
-
-        printPassword(service);
+        const selectedCredential = await selectCredential();
+        if (command === 'list') {
+          printPassword(selectedCredential.service);
+        } else {
+          const deleted = await deleteCredential(selectedCredential);
+          if (deleted) {
+            console.log('Deleted');
+          } else {
+            console.log('Not deleted');
+          }
+        }
       }
       break;
+
     case 'add':
       {
         const newCredential = await askForCredential();
