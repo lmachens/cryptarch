@@ -10,6 +10,7 @@ import { printPassword } from './utils/messages';
 import { connectDatabase } from './utils/database';
 
 dotenv.config();
+import { readCredentials } from './utils/credentials';
 
 // function start() {
 const start = async () => {
@@ -32,7 +33,16 @@ const start = async () => {
   switch (command) {
     case 'list':
       {
-        const service = await chooseService(['Github', 'Codewars', 'Google']);
+        const credentials = await readCredentials();
+        const credentialServices = credentials.map(
+          (credential) => credential.service
+        );
+        const service = await chooseService(credentialServices);
+        const selectedService = credentials.find(
+          (credential) => credential.service === service
+        );
+        console.log(selectedService);
+
         printPassword(service);
       }
       break;
