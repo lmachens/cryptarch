@@ -7,14 +7,17 @@ import {
 } from './utils/questions';
 import { isMainPasswordValid } from './utils/validation';
 import { printPassword } from './utils/messages';
+import { connectDatabase } from './utils/database';
 
 dotenv.config();
 
 // function start() {
-console.log(process.env.MONGO_URL);
-
 const start = async () => {
-  // await connectDatabase(databaseURI);
+  if (process.env.MONGO_URL === undefined) {
+    throw new Error('Missing env MONGO_URL');
+  }
+
+  await connectDatabase(process.env.MONGO_URL);
 
   /* Solution with while */
   let mainPassword = await askForMainPassword();
