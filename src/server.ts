@@ -7,10 +7,10 @@ import {
 } from './utils/questions';
 import { isMainPasswordValid } from './utils/validation';
 import { printPassword } from './utils/messages';
-import { connectDatabase } from './utils/database';
+import { connectDatabase, disconnectDatabase } from './utils/database';
 
 dotenv.config();
-import { readCredentials } from './utils/credentials';
+import { readCredentials, saveCredential } from './utils/credentials';
 
 // function start() {
 const start = async () => {
@@ -49,6 +49,7 @@ const start = async () => {
     case 'add':
       {
         const newCredential = await askForCredential();
+        await saveCredential(newCredential);
         console.log(newCredential);
       }
       break;
@@ -65,6 +66,8 @@ const start = async () => {
 
   /* ToDo */
   // askForCommand();
+
+  await disconnectDatabase();
 };
 
 start();
