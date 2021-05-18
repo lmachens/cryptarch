@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import {
   askForCredential,
   askForMainPassword,
@@ -7,8 +8,14 @@ import {
 import { isMainPasswordValid } from './utils/validation';
 import { printPassword } from './utils/messages';
 
+dotenv.config();
+
 // function start() {
+console.log(process.env.MONGO_URL);
+
 const start = async () => {
+  // await connectDatabase(databaseURI);
+
   /* Solution with while */
   let mainPassword = await askForMainPassword();
   while (!(await isMainPasswordValid(mainPassword))) {
