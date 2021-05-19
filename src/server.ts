@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from 'express';
 import { connectDatabase } from './utils/database';
-import { readCredentials } from './utils/credentials';
+import { readCredentials, saveCredential } from './utils/credentials';
 
 if (process.env.MONGO_URL === undefined) {
   throw new Error('Missing env MONGO_URL');
@@ -19,8 +19,9 @@ app.get('/api/credentials', async (_request, response) => {
   response.json(credentials);
 });
 
-app.post('/api/credentials', (_request, response) => {
-  response.send('Add new credential');
+app.post('/api/credentials', async (request, response) => {
+  await saveCredential(request.body, '123');
+  response.send('Credential saved in db');
 });
 
 connectDatabase(process.env.MONGO_URL).then(() => {
