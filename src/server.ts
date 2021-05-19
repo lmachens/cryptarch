@@ -7,7 +7,14 @@ import {
   chooseCommand,
 } from './utils/questions';
 import { isMainPasswordValid } from './utils/validation';
-import { printPassword } from './utils/messages';
+import {
+  printDeletedSuccess,
+  printDeletedFailure,
+  printPassword,
+  printAddedSuccess,
+  printMainPasswordInvalid,
+  printMainPasswordValid,
+} from './utils/messages';
 import { connectDatabase, disconnectDatabase } from './utils/database';
 import {
   deleteCredential,
@@ -24,10 +31,10 @@ const start = async () => {
 
   let mainPassword = await askForMainPassword();
   while (!(await isMainPasswordValid(mainPassword))) {
-    console.log('Is invalid');
+    printMainPasswordInvalid();
     mainPassword = await askForMainPassword();
   }
-  console.log('Is valid');
+  printMainPasswordValid();
 
   const command = await chooseCommand();
 
@@ -41,9 +48,9 @@ const start = async () => {
         } else {
           const deleted = await deleteCredential(selectedCredential);
           if (deleted) {
-            console.log('Deleted');
+            printDeletedSuccess(selectedCredential.service);
           } else {
-            console.log('Not deleted');
+            printDeletedFailure(selectedCredential.service);
           }
         }
       }
@@ -53,7 +60,7 @@ const start = async () => {
       {
         const newCredential = await askForCredential();
         await saveCredential(newCredential);
-        console.log(newCredential);
+        printAddedSuccess(newCredential.service);
       }
       break;
   }
