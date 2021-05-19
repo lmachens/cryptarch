@@ -24,6 +24,11 @@ app.post('/api/credentials', async (request, response) => {
   response.send('Credential saved in db');
 });
 
+app.delete('/api/credentials/:service', (request, response) => {
+  console.log(request.params.service);
+  response.send('Delete credential');
+});
+
 connectDatabase(process.env.MONGO_URL).then(() => {
   console.log('Database connected');
   app.listen(port, () => {
