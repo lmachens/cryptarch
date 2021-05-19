@@ -42,9 +42,9 @@ const start = async () => {
     case 'list':
     case 'delete':
       {
-        const selectedCredential = await selectCredential();
+        const selectedCredential = await selectCredential(mainPassword);
         if (command === 'list') {
-          printPassword(selectedCredential.service);
+          printPassword(selectedCredential);
         } else {
           const deleted = await deleteCredential(selectedCredential);
           if (deleted) {
@@ -59,7 +59,7 @@ const start = async () => {
     case 'add':
       {
         const newCredential = await askForCredential();
-        await saveCredential(newCredential);
+        await saveCredential(newCredential, mainPassword);
         printAddedSuccess(newCredential.service);
       }
       break;
