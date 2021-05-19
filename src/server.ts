@@ -1,4 +1,6 @@
 import dotenv from 'dotenv';
+dotenv.config();
+
 import {
   askForCredential,
   askForMainPassword,
@@ -7,15 +9,12 @@ import {
 import { isMainPasswordValid } from './utils/validation';
 import { printPassword } from './utils/messages';
 import { connectDatabase, disconnectDatabase } from './utils/database';
-
-dotenv.config();
 import {
   deleteCredential,
   saveCredential,
   selectCredential,
 } from './utils/credentials';
 
-// function start() {
 const start = async () => {
   if (process.env.MONGO_URL === undefined) {
     throw new Error('Missing env MONGO_URL');
@@ -23,7 +22,6 @@ const start = async () => {
 
   await connectDatabase(process.env.MONGO_URL);
 
-  /* Solution with while */
   let mainPassword = await askForMainPassword();
   while (!(await isMainPasswordValid(mainPassword))) {
     console.log('Is invalid');
@@ -59,18 +57,6 @@ const start = async () => {
       }
       break;
   }
-
-  /* Solution with recursion */
-  //   const mainPassword = await askForMainPassword();
-  //   if (!isMainPasswordValid(mainPassword)) {
-  //     console.log('Is invalid');
-  //     start(); // Recursion
-  //   } else {
-  //     console.log('Is valid');
-  //   }
-
-  /* ToDo */
-  // askForCommand();
 
   await disconnectDatabase();
 };

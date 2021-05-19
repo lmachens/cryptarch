@@ -7,7 +7,6 @@ export const readCredentials = async (): Promise<Credential[]> => {
 };
 
 export const saveCredential = async (credential: Credential): Promise<void> => {
-  // credential.password = encrypt(credential.password);
   await getCredentialsCollection().insertOne(credential);
 };
 

@@ -10,10 +10,6 @@ export const connectDatabase = async (url: string): Promise<void> => {
   await client.connect();
 };
 
-// export const disconnectDatabase = (): Promise<void> => {
-//   return client.close();
-// };
-
 export const disconnectDatabase = async (): Promise<void> => {
   await client.close();
 };
@@ -23,6 +19,5 @@ export const getCollection = <T>(name: string): Collection<T> => {
 };
 
 export const getCredentialsCollection = (): Collection<Credential> => {
-  // return client.db().collection<Credential>('credentials');
   return getCollection<Credential>('credentials');
 };
