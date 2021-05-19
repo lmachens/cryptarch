@@ -1,60 +1,71 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import {
   askForCredential,
   askForMainPassword,
   chooseCommand,
-  chooseService,
 } from './utils/questions';
 import { isMainPasswordValid } from './utils/validation';
-import { printPassword } from './utils/messages';
-import { readCredentials } from './utils/credentials';
+import {
+  printDeletedSuccess,
+  printDeletedFailure,
+  printPassword,
+  printAddedSuccess,
+  printMainPasswordInvalid,
+  printMainPasswordValid,
+} from './utils/messages';
+import { connectDatabase, disconnectDatabase } from './utils/database';
+import {
+  deleteCredential,
+  saveCredential,
+  selectCredential,
+} from './utils/credentials';
 
-// function start() {
 const start = async () => {
-  /* Solution with while */
+  if (process.env.MONGO_URL === undefined) {
+    throw new Error('Missing env MONGO_URL');
+  }
+
+  await connectDatabase(process.env.MONGO_URL);
+
   let mainPassword = await askForMainPassword();
   while (!(await isMainPasswordValid(mainPassword))) {
-    console.log('Is invalid');
+    printMainPasswordInvalid();
     mainPassword = await askForMainPassword();
   }
-  console.log('Is valid');
+  printMainPasswordValid();
 
   const command = await chooseCommand();
 
   switch (command) {
     case 'list':
+    case 'delete':
       {
-        const credentials = await readCredentials();
-        const credentialServices = credentials.map(
-          (credential) => credential.service
-        );
-        const service = await chooseService(credentialServices);
-        const selectedService = credentials.find(
-          (credential) => credential.service === service
-        );
-        console.log(selectedService);
-
-        printPassword(service);
+        const selectedCredential = await selectCredential();
+        if (command === 'list') {
+          printPassword(selectedCredential.service);
+        } else {
+          const deleted = await deleteCredential(selectedCredential);
+          if (deleted) {
+            printDeletedSuccess(selectedCredential.service);
+          } else {
+            printDeletedFailure(selectedCredential.service);
+          }
+        }
       }
       break;
+
     case 'add':
       {
         const newCredential = await askForCredential();
-        console.log(newCredential);
+        await saveCredential(newCredential);
+        printAddedSuccess(newCredential.service);
       }
       break;
   }
 
-  /* Solution with recursion */
-  //   const mainPassword = await askForMainPassword();
-  //   if (!isMainPasswordValid(mainPassword)) {
-  //     console.log('Is invalid');
-  //     start(); // Recursion
-  //   } else {
-  //     console.log('Is valid');
-  //   }
-
-  /* ToDo */
-  // askForCommand();
+  await disconnectDatabase();
 };
 
 start();
