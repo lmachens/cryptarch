@@ -1,16 +1,27 @@
 import type { Credential } from '../types';
 import { getCredentialsCollection } from './database';
 import { chooseService } from './questions';
+import CryptoJS from 'crypto-js';
 
 export const readCredentials = async (): Promise<Credential[]> => {
   return await getCredentialsCollection().find().sort({ service: 1 }).toArray();
 };
 
-export const saveCredential = async (credential: Credential): Promise<void> => {
-  await getCredentialsCollection().insertOne(credential);
+export const saveCredential = async (
+  credential: Credential,
+  key: string
+): Promise<void> => {
+  const encryptedPassword = CryptoJS.TripleDES.encrypt(
+    credential.password,
+    key
+  ).toString();
+  await getCredentialsCollection().insertOne({
+    ...credential,
+    password: encryptedPassword,
+  });
 };
 
-export const selectCredential = async (): Promise<Credential> => {
+export const selectCredential = async (key: string): Promise<Credential> => {
   const credentials = await readCredentials();
   const credentialServices = credentials.map(
     (credential) => credential.service
@@ -22,7 +33,13 @@ export const selectCredential = async (): Promise<Credential> => {
   if (!selectedCredential) {
     throw new Error('Can not find credential');
   }
-  return selectedCredential;
+  return {
+    ...selectedCredential,
+    password: CryptoJS.TripleDES.decrypt(
+      selectedCredential.password,
+      key
+    ).toString(CryptoJS.enc.Utf8),
+  };
 };
 
 export const deleteCredential = async (

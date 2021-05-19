@@ -1,3 +1,5 @@
+import { Credential } from '../types';
+
 export const printMainPasswordInvalid = (): void => {
   console.log('Invalid password ╰（‵□′）╯');
 };
@@ -6,9 +8,10 @@ export const printMainPasswordValid = (): void => {
   console.log('You shell pass (❁´◡`❁)');
 };
 
-export const printPassword = (service: string): void => {
-  const password = service + '123';
-  console.log(`The password for ${service} is ${password} (￣_,￣ )`);
+export const printPassword = (credential: Credential): void => {
+  console.log(
+    `The password for ${credential.service} is ${credential.password} (￣_,￣ )`
+  );
 };
 
 export const printDeletedSuccess = (service: string): void => {
