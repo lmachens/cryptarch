@@ -46,7 +46,7 @@ const start = async () => {
         if (command === 'list') {
           printPassword(selectedCredential);
         } else {
-          const deleted = await deleteCredential(selectedCredential);
+          const deleted = await deleteCredential(selectedCredential.service);
           if (deleted) {
             printDeletedSuccess(selectedCredential.service);
           } else {
