@@ -1,71 +1,41 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import {
-  askForCredential,
-  askForMainPassword,
-  chooseCommand,
-} from './utils/questions';
-import { isMainPasswordValid } from './utils/validation';
-import {
-  printDeletedSuccess,
-  printDeletedFailure,
-  printPassword,
-  printAddedSuccess,
-  printMainPasswordInvalid,
-  printMainPasswordValid,
-} from './utils/messages';
-import { connectDatabase, disconnectDatabase } from './utils/database';
+import express from 'express';
+import { connectDatabase } from './utils/database';
 import {
   deleteCredential,
+  readCredentials,
   saveCredential,
-  selectCredential,
 } from './utils/credentials';
 
-const start = async () => {
-  if (process.env.MONGO_URL === undefined) {
-    throw new Error('Missing env MONGO_URL');
-  }
+if (process.env.MONGO_URL === undefined) {
+  throw new Error('Missing env MONGO_URL');
+}
 
-  await connectDatabase(process.env.MONGO_URL);
+const app = express();
+const port = 5000;
 
-  let mainPassword = await askForMainPassword();
-  while (!(await isMainPasswordValid(mainPassword))) {
-    printMainPasswordInvalid();
-    mainPassword = await askForMainPassword();
-  }
-  printMainPasswordValid();
+app.use(express.json());
 
-  const command = await chooseCommand();
+app.get('/api/credentials', async (_request, response) => {
+  const credentials = await readCredentials();
+  response.json(credentials);
+});
 
-  switch (command) {
-    case 'list':
-    case 'delete':
-      {
-        const selectedCredential = await selectCredential(mainPassword);
-        if (command === 'list') {
-          printPassword(selectedCredential);
-        } else {
-          const deleted = await deleteCredential(selectedCredential);
-          if (deleted) {
-            printDeletedSuccess(selectedCredential.service);
-          } else {
-            printDeletedFailure(selectedCredential.service);
-          }
-        }
-      }
-      break;
+app.post('/api/credentials', async (request, response) => {
+  await saveCredential(request.body, '123');
+  response.send('Credential saved in db');
+});
 
-    case 'add':
-      {
-        const newCredential = await askForCredential();
-        await saveCredential(newCredential, mainPassword);
-        printAddedSuccess(newCredential.service);
-      }
-      break;
-  }
+app.delete('/api/credentials/:service', async (request, response) => {
+  await deleteCredential(request.params.service);
+  response.send('Delete credential');
+});
 
-  await disconnectDatabase();
-};
-
-start();
+connectDatabase(process.env.MONGO_URL).then(() => {
+  console.log('Database connected');
+  app.listen(port, () => {
+    console.log(`Cryptarch listening at http://localhost:${port}`);
+  });
+});
