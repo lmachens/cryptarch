@@ -1,0 +1,10 @@
+.hero {
+  background: blueviolet;
+  color: lightpink;
+  padding: 2em;
+}
+
+.hero__logo {
+  height: 3em;
+  width: auto;
+}
